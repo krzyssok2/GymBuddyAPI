@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using GymBuddyAPI;
 using GymBuddyAPI.Options;
+using GymBuddyAPI.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -98,6 +99,8 @@ namespace GymBuddy
                 x.AddSecurityDefinition(name: "Bearer", scheme);
 
                 x.OperationFilter<SecurityRequirementsOperationFilter>(true, scheme.Reference.Id);
+
+                services.AddScoped<AuthServices>();
             });
         }
 

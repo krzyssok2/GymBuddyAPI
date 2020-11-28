@@ -16,10 +16,5 @@
     <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="6.0.1" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Entities\" />
-    <Folder Include="EntityConfiguration\" />
-  </ItemGroup>
-
 
 </Project>

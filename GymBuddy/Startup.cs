@@ -67,8 +67,6 @@ namespace GymBuddy
                 x.TokenValidationParameters = tokenValidationParameters;
             });
 
-            services.AddControllers();
-
             services.AddSwaggerGen(x =>
             {
                 x.SwaggerDoc("v1", new OpenApiInfo { Title = "GymBuddy API", Version = "v1" });
@@ -100,8 +98,9 @@ namespace GymBuddy
 
                 x.OperationFilter<SecurityRequirementsOperationFilter>(true, scheme.Reference.Id);
 
-                services.AddScoped<AuthServices>();
             });
+            services.AddControllers();
+            services.AddScoped<AuthServices>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

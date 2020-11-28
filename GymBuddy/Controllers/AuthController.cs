@@ -15,13 +15,13 @@ namespace WeatherForecastAPI.Controllers
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly GymBuddyContext _context;
-       // private readonly AuthServices service;
-        public AuthController(UserManager<IdentityUser> identityService, GymBuddyContext gymBuddyContext//, AuthServices authservices
+        private readonly AuthServices service;
+        public AuthController(UserManager<IdentityUser> identityService, GymBuddyContext gymBuddyContext, AuthServices authservices
             )
         {
             _userManager = identityService;
             _context = gymBuddyContext;
-           // service = authservices;
+            service = authservices;
         }
         /// <summary>
         /// Log in user
@@ -29,48 +29,48 @@ namespace WeatherForecastAPI.Controllers
         /// <returns></returns>
         /// <response code="200">Successfully logged in</response>   
         /// <response code="400">Wasn't able to log in</response>   
-        //[HttpPost("Login")]
-        //[ProducesResponseType(typeof(AuthSuccessResponse), 200)]
-        //public async Task<ActionResult> LoginAsync(AuthAccount request)
-        //{
-        //    var authResponse = await service.LogIn(request.Email, request.Password);
+        [HttpPost("Login")]
+        [ProducesResponseType(typeof(AuthSuccessResponse), 200)]
+        public async Task<ActionResult> LoginAsync(AuthAccount request)
+        {
+            var authResponse = await service.LogIn(request.Email, request.Password);
 
-        //    if (!authResponse.Success)
-        //    {
-        //        return Unauthorized(new AuthFailedResponse
-        //        {
-        //            Error = authResponse.Error
-        //        });
-        //    }
-        //    return Ok(new AuthSuccessResponse
-        //    {
-        //        Token = authResponse.Token,
-        //        RefreshToken = authResponse.RefreshToken
-        //    });
-        //}
-        ///// <summary>
-        ///// Refresh user token
-        ///// </summary>
-        ///// <returns></returns>
-        //[HttpPost("Refresh")]
-        //public async Task<ActionResult> RefreshAsync(RefreshTokenRequest request)
-        //{
-        //    var authResponse = await service.RefreshTokenAsync(request.Token, request.RefreshToken);
+            if (!authResponse.Success)
+            {
+                return Unauthorized(new AuthFailedResponse
+                {
+                    Error = authResponse.Error
+                });
+            }
+            return Ok(new AuthSuccessResponse
+            {
+                Token = authResponse.Token,
+                RefreshToken = authResponse.RefreshToken
+            });
+        }
+        /// <summary>
+        /// Refresh user token
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost("Refresh")]
+        public async Task<ActionResult> RefreshAsync(RefreshTokenRequest request)
+        {
+            var authResponse = await service.RefreshTokenAsync(request.Token, request.RefreshToken);
 
-        //    if (!authResponse.Success)
-        //    {
-        //        return BadRequest(new AuthFailedResponse
-        //        {
-        //            Error = authResponse.Error
-        //        });
-        //    }
+            if (!authResponse.Success)
+            {
+                return BadRequest(new AuthFailedResponse
+                {
+                    Error = authResponse.Error
+                });
+            }
 
-        //    return Ok(new AuthSuccessResponse
-        //    {
-        //        Token = authResponse.Token,
-        //        RefreshToken = authResponse.RefreshToken
-        //    });
-        //}
+            return Ok(new AuthSuccessResponse
+            {
+                Token = authResponse.Token,
+                RefreshToken = authResponse.RefreshToken
+            });
+        }
         /// <summary>
         /// Register user
         /// </summary>

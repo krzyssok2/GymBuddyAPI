@@ -2,6 +2,8 @@
 using GymBuddyAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using System.Linq;
+using GymBuddyAPI;
 
 namespace WeatherForecastAPI.Controllers
 {
@@ -9,12 +11,16 @@ namespace WeatherForecastAPI.Controllers
     [Route("api/[controller]")]
     public class ExerciseController : ControllerBase
     {
-        public ExerciseController()
+        private readonly GymBuddyContext _context;
+        public ExerciseController(GymBuddyContext context)
         {
+            _context = context;
         }
         [HttpGet("")]
         public ActionResult<AllExercises> GetAllExercises()
         {
+            
+
             return Ok();
         }
         [HttpPost("")]

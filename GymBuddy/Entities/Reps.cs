@@ -5,11 +5,10 @@ using System.Threading.Tasks;
 
 namespace GymBuddyAPI.Entities
 {
-    public class Workouts
+    public class Reps
     {
         public long Id { get; set; }
-        public string WorkoutName { get; set; }
-        public UserData UserData { get; set; }
-        public ICollection<Exercises> Exercises { get; set; }
+        public int Weight { get; set; }
+        public ExerciseSets ExerciseSet { get; set; }
     }
 }

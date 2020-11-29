@@ -1,22 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using GymBuddyAPI;
 using GymBuddyAPI.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace GymBuddy.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class UserAccountController : ControllerBase
     {
 
-
-        public UserAccountController()
+        private readonly GymBuddyContext _context;
+        public UserAccountController(GymBuddyContext context)
         {
-
+            _context = context;
         }
 
         [HttpGet("workouts/today")]
@@ -60,13 +66,40 @@ namespace GymBuddy.Controllers
         [HttpGet("workouts")]
         public ActionResult<AllWorkouts> GetAllWorkouts()
         {
-            AllWorkouts allworkouts = new AllWorkouts();
+            var userName = User.Claims.Single(a => a.Type == ClaimTypes.NameIdentifier).Value;
+            var exercises = _context.Exercises.Where(i => i.Creator == userName || i.Creator == "").ToList();
+
+            var UserData = _context.UserData.Where(i => i.User == userName).First();
+            var result = _context.Workouts
+                .Where(i => i.UserData == UserData)
+                .Include(i=>i.Exercises).ThenInclude(i=>i.Sets).ThenInclude(i=>i.AllReps)
+                .ToList();
+
+            AllWorkouts allworkouts = new AllWorkouts
+            {
+                Workouts = result.Select(i => new Workout()
+                {
+                    Name = i.WorkoutName,
+                    Exercises = i.Exercises.Select(j => new Exercise()
+                    {
+                        ExerciseName = j.Name,
+                        Sets = j.Sets.Select(k => new Set()
+                        {
+                            Reps = k.AllReps.Select(l => new Rep()
+                            {
+                                Weights = l.Weight
+                            }).ToList()
+                        }).ToList()
+                    }).ToList()
+                }).ToList()
+            };
 
             return Ok(allworkouts);
         }
         [HttpPut("workouts")]
         public ActionResult<AllWorkouts> PutAllWorkouts()
         {
+
             AllWorkouts allworkouts = new AllWorkouts();
 
             return Ok(allworkouts);
@@ -74,7 +107,6 @@ namespace GymBuddy.Controllers
         [HttpPost("workouts")]
         public ActionResult<Workout> PostWorkout(Workout workout)
         {
-
             return Ok(workout);
         }
         [HttpGet("workouts/{day}")]

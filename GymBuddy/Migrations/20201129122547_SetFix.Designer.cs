@@ -4,14 +4,16 @@ using GymBuddyAPI;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace GymBuddyAPI.Migrations
 {
     [DbContext(typeof(GymBuddyContext))]
-    partial class GymBuddyContextModelSnapshot : ModelSnapshot
+    [Migration("20201129122547_SetFix")]
+    partial class SetFix
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -43,6 +45,12 @@ namespace GymBuddyAPI.Migrations
 
                     b.Property<long?>("ExerciseId")
                         .HasColumnType("bigint");
+
+                    b.Property<int>("Reps")
+                        .HasColumnType("int");
+
+                    b.Property<double>("Weight")
+                        .HasColumnType("float");
 
                     b.HasKey("Id");
 
@@ -110,7 +118,7 @@ namespace GymBuddyAPI.Migrations
                         .HasColumnType("bigint")
                         .UseIdentityColumn();
 
-                    b.Property<long?>("ExerciseSetId")
+                    b.Property<long?>("ExerciseSetsId")
                         .HasColumnType("bigint");
 
                     b.Property<int>("Weight")
@@ -118,7 +126,7 @@ namespace GymBuddyAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ExerciseSetId");
+                    b.HasIndex("ExerciseSetsId");
 
                     b.ToTable("Reps");
                 });
@@ -389,11 +397,9 @@ namespace GymBuddyAPI.Migrations
 
             modelBuilder.Entity("GymBuddyAPI.Entities.Reps", b =>
                 {
-                    b.HasOne("GymBuddyAPI.Entities.ExerciseSets", "ExerciseSet")
+                    b.HasOne("GymBuddyAPI.Entities.ExerciseSets", null)
                         .WithMany("AllReps")
-                        .HasForeignKey("ExerciseSetId");
-
-                    b.Navigation("ExerciseSet");
+                        .HasForeignKey("ExerciseSetsId");
                 });
 
             modelBuilder.Entity("GymBuddyAPI.Entities.Workouts", b =>

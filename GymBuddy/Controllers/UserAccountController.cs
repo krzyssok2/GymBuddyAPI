@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using GymBuddyAPI;
+using GymBuddyAPI.Entities;
 using GymBuddyAPI.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -28,40 +29,59 @@ namespace GymBuddy.Controllers
         [HttpGet("workouts/today")]
         public ActionResult<Workout> GetTodaysWorkout()
         {
-            Workout workout = new Workout
-            {
-                Name = "test",
-                Exercises = new List<Exercise>
-                {
-                    new Exercise
-                    {
-                        ExerciseName="test1",
-                        Sets = new List<Set>
-                        {
-                            new Set
-                            {
-                                Reps= new List<Rep>
-                                {
-                                    new Rep
-                                    {
-                                        Weights=5
-                                    },
-                                    new Rep
-                                    {
-                                        Weights=6
-                                    },
-                                    new Rep
-                                    {
-                                        Weights=7
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            };
+            var userName = User.Claims.Single(a => a.Type == ClaimTypes.NameIdentifier).Value;
 
-            return Ok(workout);
+            var Schedule = _context.UserData
+                .Include(i=>i.Workouts).ThenInclude(i=>i.Exercises).ThenInclude(i=>i.Sets).ThenInclude(i=>i.AllReps)
+                .Include(i=>i.UserSchedule)
+                .Where(i => i.User == userName)
+                .First().UserSchedule;
+
+            string day = DateTime.Now.DayOfWeek.ToString();
+
+            var result = new Workouts();
+            switch(day)
+            {
+                case "Monday":
+                    result = Schedule.Monday;
+                    break;
+                case "Tuesday":
+                    result = Schedule.Tuesday;
+                    break;
+                case "Wednesday":
+                    result = Schedule.Wednesday;
+                    break;
+                case "Thursday":
+                    result = Schedule.Thursday;
+                    break;
+                case "Friday":
+                    result = Schedule.Friday;
+                    break;
+                case "Saturday":
+                    result = Schedule.Saturday;
+                    break;
+                case "Sunday":
+                    result = Schedule.Sunday;
+                    break;
+            }
+
+            var answer = new Workout()
+            {
+                Name = result.WorkoutName,
+                Exercises = result.Exercises.Select(i => new Exercise()
+                {
+                    ExerciseName = i.Name,
+                    Type = i.ExerciseType,
+                    Sets = i.Sets.Select(j => new Set()
+                    {
+                        Reps = j.AllReps.Select(k => new Rep()
+                        {
+                            Weights = k.Weight
+                        }).ToList()
+                    }).ToList()
+                }).ToList()
+            };
+            return Ok(answer);
         }
         [HttpGet("workouts")]
         public ActionResult<AllWorkouts> GetAllWorkouts()
@@ -83,6 +103,7 @@ namespace GymBuddy.Controllers
                     Exercises = i.Exercises.Select(j => new Exercise()
                     {
                         ExerciseName = j.Name,
+                        Type=j.ExerciseType,
                         Sets = j.Sets.Select(k => new Set()
                         {
                             Reps = k.AllReps.Select(l => new Rep()
@@ -96,10 +117,13 @@ namespace GymBuddy.Controllers
 
             return Ok(allworkouts);
         }
+        
+        
+        
         [HttpPut("workouts")]
         public ActionResult<AllWorkouts> PutAllWorkouts()
         {
-
+            var userName = User.Claims.Single(a => a.Type == ClaimTypes.NameIdentifier).Value;
             AllWorkouts allworkouts = new AllWorkouts();
 
             return Ok(allworkouts);
@@ -107,41 +131,192 @@ namespace GymBuddy.Controllers
         [HttpPost("workouts")]
         public ActionResult<Workout> PostWorkout(Workout workout)
         {
+
             return Ok(workout);
         }
+        
+        
+        
+        
         [HttpGet("workouts/{day}")]
         public ActionResult<Workout> GetWorkoutByDay(int day)
         {
-            Workout workout = new Workout();
+            var userName = User.Claims.Single(a => a.Type == ClaimTypes.NameIdentifier).Value;
 
-            return Ok(workout);
+            var Schedule = _context.UserData
+                .Include(i => i.Workouts).ThenInclude(i => i.Exercises).ThenInclude(i => i.Sets).ThenInclude(i => i.AllReps)
+                .Include(i => i.UserSchedule)
+                .Where(i => i.User == userName)
+                .First().UserSchedule;
+
+            var result = new Workouts();
+            switch (day)
+            {
+                case 1:
+                    result = Schedule.Monday;
+                    break;
+                case 2:
+                    result = Schedule.Tuesday;
+                    break;
+                case 3:
+                    result = Schedule.Wednesday;
+                    break;
+                case 4:
+                    result = Schedule.Thursday;
+                    break;
+                case 5:
+                    result = Schedule.Friday;
+                    break;
+                case 6:
+                    result = Schedule.Saturday;
+                    break;
+                case 7:
+                    result = Schedule.Sunday;
+                    break;
+            }
+
+            var answer = new Workout()
+            {
+                Name = result.WorkoutName,
+                Exercises = result.Exercises.Select(i => new Exercise()
+                {
+                    ExerciseName = i.Name,
+                    Type = i.ExerciseType,
+                    Sets = i.Sets.Select(j => new Set()
+                    {
+                        Reps = j.AllReps.Select(k => new Rep()
+                        {
+                            Weights = k.Weight
+                        }).ToList()
+                    }).ToList()
+                }).ToList()
+            };
+            return Ok(answer);
         }
         [HttpDelete("workouts/{day}")]
         public ActionResult<Workout> DeleteWorkoutFromDay(int day)
         {
-            Workout workout = new Workout();
+            var userName = User.Claims.Single(a => a.Type == ClaimTypes.NameIdentifier).Value;
 
-            return Ok(workout);
+            var value = _context.UserData.Where(i => i.User == userName).First().UserSchedule;
+
+            var result = new Workouts();
+            switch (day)
+            {
+                case 1:
+                    result = _context.Schedules.Where(i=>i.Id==value.Id).First().Monday=null;
+                    break;
+                case 2:
+                    result = _context.Schedules.Where(i => i.Id == value.Id).First().Tuesday = null;
+                    break;
+                case 3:
+                    result = _context.Schedules.Where(i => i.Id == value.Id).First().Wednesday = null;
+                    break;
+                case 4:
+                    result = _context.Schedules.Where(i => i.Id == value.Id).First().Thursday = null;
+                    break;
+                case 5:
+                    result = _context.Schedules.Where(i => i.Id == value.Id).First().Friday = null;
+                    break;
+                case 6:
+                    result = _context.Schedules.Where(i => i.Id == value.Id).First().Saturday = null;
+                    break;
+                case 7:
+                    result = _context.Schedules.Where(i => i.Id == value.Id).First().Sunday = null;
+                    break;
+            }
+            _context.SaveChanges();
+            return Ok();
+        
         }
+
         [HttpDelete("workouts/{name}")]
         public ActionResult<AllWorkouts> DeleteWorkout(string name)
         {
-            AllWorkouts allWorkouts = new AllWorkouts();
+            var userName = User.Claims.Single(a => a.Type == ClaimTypes.NameIdentifier).Value;
 
-            return Ok(allWorkouts);
+            var value = _context.Workouts.First(i => i.UserData.User == userName && i.WorkoutName == name);
+
+            var delete = _context.Workouts.Remove(value);
+
+            var databaseFunction = _context.Workouts.Include(i => i.UserData).Select(i => i.UserData.User == userName).ToList();
+
+            _context.SaveChanges();
+
+            var result2 = new AllWorkouts()
+            {
+                Workouts = _context.Workouts
+                .Include(i => i.UserData)
+                .Where(i => i.UserData.User == userName)
+                .Select(i => new Workout
+                {
+                    Name = i.WorkoutName,
+                }).ToList()
+            };
+
+            return Ok(result2);
         }
         [HttpPut("workouts/{day}")]
-        public ActionResult<Workout> PutWorkoutFromDay(int day, Workout workout)
+        public ActionResult<UserSchedules> PutWorkoutFromDay(int day, string workoutName)
         {
-            Workout currentworkout = new Workout();
+            var userName = User.Claims.Single(a => a.Type == ClaimTypes.NameIdentifier).Value;
+            var value = _context.UserData
+                .First(i => i.User == userName)
+                .UserSchedule;
 
-            return Ok(workout);
+            switch(day)
+            {
+                case 1:
+                    value.Monday = _context.Workouts.Include(i=>i.UserData).First(i => i.WorkoutName == workoutName && i.UserData.User == userName);
+                    break;
+                case 2:
+                    value.Tuesday = _context.Workouts.Include(i => i.UserData).First(i => i.WorkoutName == workoutName && i.UserData.User == userName);
+                    break;
+                case 3:
+                    value.Wednesday = _context.Workouts.Include(i => i.UserData).First(i => i.WorkoutName == workoutName && i.UserData.User == userName);
+                    break;
+                case 4:
+                    value.Thursday = _context.Workouts.Include(i => i.UserData).First(i => i.WorkoutName == workoutName && i.UserData.User == userName);
+                    break;
+                case 5:
+                    value.Friday = _context.Workouts.Include(i => i.UserData).First(i => i.WorkoutName == workoutName && i.UserData.User == userName);
+                    break;
+                case 6:
+                    value.Saturday = _context.Workouts.Include(i => i.UserData).First(i => i.WorkoutName == workoutName && i.UserData.User == userName);
+                    break;
+                case 7:
+                    value.Sunday = _context.Workouts.Include(i => i.UserData).First(i => i.WorkoutName == workoutName && i.UserData.User == userName);
+                    break;
+            }
+            _context.SaveChanges();
+            return Ok(value);
         }
 
         [HttpGet("exercises")]
         public ActionResult<AllExercises> GetAllExercises()
         {
-            AllExercises allExercises = new AllExercises();
+            var userName = User.Claims.Single(a => a.Type == ClaimTypes.NameIdentifier).Value;
+
+            var exercises = _context.Exercises
+                .Where(i => i.Creator == userName).Include(i=>i.Sets).ThenInclude(i=>i.AllReps)
+                .ToList();
+
+
+            var allExercises = new AllExercises()
+            {
+                Exercises=exercises.Select(i=> new Exercise()
+                {
+                    ExerciseName=i.Name,
+                    Type=i.ExerciseType,
+                    Sets=i.Sets.Select(j=>new Set
+                    {
+                        Reps=j.AllReps.Select(k=> new Rep()
+                        {
+                            Weights=k.Weight
+                        }).ToList()
+                    }).ToList()
+                }).ToList()
+            };
 
             return Ok(allExercises);
         }
@@ -153,18 +328,37 @@ namespace GymBuddy.Controllers
             return Ok(allExercises);
         }
         [HttpPost("exercises")]
-        public ActionResult<AllExercises> PostExercise(Exercise exercise)
+        public ActionResult<Exercise> PostExercise(Exercise exercise)
         {
-            AllExercises allExercises = new AllExercises();
+            var userName = User.Claims.Single(a => a.Type == ClaimTypes.NameIdentifier).Value;
 
-            return Ok(allExercises);
-        }
+            var newExercise = new Exercises()
+            {
+                Creator = userName,
+                ExerciseType = exercise.Type,
+                Name=exercise.ExerciseName
+            };
+
+            var add = _context.Exercises.Add(newExercise);
+
+            _context.SaveChanges();
+
+            return Ok(newExercise);
+        }        
         [HttpDelete("exercises/{ExerciseName}")]
         public ActionResult<AllExercises> DeleteExercise(string ExerciseName)
         {
-            AllExercises allExercises = new AllExercises();
+            var userName = User.Claims.Single(a => a.Type == ClaimTypes.NameIdentifier).Value;
+            
+            var exercise= _context.Exercises.First(i=>i.Creator==userName&&i.Name.ToLower()==ExerciseName.ToLower());
+            if (exercise == null) return Ok("Failed");
+            var delete = _context.Exercises.Remove(exercise);
 
-            return Ok(allExercises);
+            _context.SaveChanges();
+
+            var result = _context.Exercises.Select(i => i.Creator == userName).ToList();
+
+            return Ok("Deleted");
         }
     }
 }

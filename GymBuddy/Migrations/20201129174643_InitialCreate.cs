@@ -62,19 +62,6 @@ namespace GymBuddyAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserData",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    User = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserData", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
@@ -209,8 +196,6 @@ namespace GymBuddyAPI.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Reps = table.Column<int>(type: "int", nullable: false),
-                    Weight = table.Column<double>(type: "float", nullable: false),
                     ExerciseId = table.Column<long>(type: "bigint", nullable: true)
                 },
                 constraints: table =>
@@ -225,22 +210,21 @@ namespace GymBuddyAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Workouts",
+                name: "Reps",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<long>(type: "bigint", nullable: false),
-                    WorkoutName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UserDataId = table.Column<long>(type: "bigint", nullable: true)
+                    Weight = table.Column<int>(type: "int", nullable: false),
+                    ExerciseSetId = table.Column<long>(type: "bigint", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Workouts", x => x.Id);
+                    table.PrimaryKey("PK_Reps", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Workouts_UserData_UserDataId",
-                        column: x => x.UserDataId,
-                        principalTable: "UserData",
+                        name: "FK_Reps_ExericseSets_ExerciseSetId",
+                        column: x => x.ExerciseSetId,
+                        principalTable: "ExericseSets",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -261,12 +245,101 @@ namespace GymBuddyAPI.Migrations
                         principalTable: "Exercises",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserData",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    User = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ScheduleId = table.Column<long>(type: "bigint", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserData", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Workouts",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    WorkoutName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UserDataId = table.Column<long>(type: "bigint", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Workouts", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ExercisesWorkouts_Workouts_WorkoutsId",
-                        column: x => x.WorkoutsId,
+                        name: "FK_Workouts_UserData_UserDataId",
+                        column: x => x.UserDataId,
+                        principalTable: "UserData",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Schedules",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    MondayId = table.Column<long>(type: "bigint", nullable: true),
+                    TuesdayId = table.Column<long>(type: "bigint", nullable: true),
+                    WednesdayId = table.Column<long>(type: "bigint", nullable: true),
+                    ThursdayId = table.Column<long>(type: "bigint", nullable: true),
+                    FridayId = table.Column<long>(type: "bigint", nullable: true),
+                    SaturdayId = table.Column<long>(type: "bigint", nullable: true),
+                    SundayId = table.Column<long>(type: "bigint", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Schedules", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Schedules_Workouts_FridayId",
+                        column: x => x.FridayId,
                         principalTable: "Workouts",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Schedules_Workouts_MondayId",
+                        column: x => x.MondayId,
+                        principalTable: "Workouts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Schedules_Workouts_SaturdayId",
+                        column: x => x.SaturdayId,
+                        principalTable: "Workouts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Schedules_Workouts_SundayId",
+                        column: x => x.SundayId,
+                        principalTable: "Workouts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Schedules_Workouts_ThursdayId",
+                        column: x => x.ThursdayId,
+                        principalTable: "Workouts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Schedules_Workouts_TuesdayId",
+                        column: x => x.TuesdayId,
+                        principalTable: "Workouts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Schedules_Workouts_WednesdayId",
+                        column: x => x.WednesdayId,
+                        principalTable: "Workouts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
@@ -324,13 +397,102 @@ namespace GymBuddyAPI.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Reps_ExerciseSetId",
+                table: "Reps",
+                column: "ExerciseSetId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Schedules_FridayId",
+                table: "Schedules",
+                column: "FridayId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Schedules_MondayId",
+                table: "Schedules",
+                column: "MondayId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Schedules_SaturdayId",
+                table: "Schedules",
+                column: "SaturdayId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Schedules_SundayId",
+                table: "Schedules",
+                column: "SundayId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Schedules_ThursdayId",
+                table: "Schedules",
+                column: "ThursdayId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Schedules_TuesdayId",
+                table: "Schedules",
+                column: "TuesdayId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Schedules_WednesdayId",
+                table: "Schedules",
+                column: "WednesdayId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserData_ScheduleId",
+                table: "UserData",
+                column: "ScheduleId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Workouts_UserDataId",
                 table: "Workouts",
                 column: "UserDataId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_ExercisesWorkouts_Workouts_WorkoutsId",
+                table: "ExercisesWorkouts",
+                column: "WorkoutsId",
+                principalTable: "Workouts",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_UserData_Schedules_ScheduleId",
+                table: "UserData",
+                column: "ScheduleId",
+                principalTable: "Schedules",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropForeignKey(
+                name: "FK_Schedules_Workouts_FridayId",
+                table: "Schedules");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Schedules_Workouts_MondayId",
+                table: "Schedules");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Schedules_Workouts_SaturdayId",
+                table: "Schedules");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Schedules_Workouts_SundayId",
+                table: "Schedules");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Schedules_Workouts_ThursdayId",
+                table: "Schedules");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Schedules_Workouts_TuesdayId",
+                table: "Schedules");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Schedules_Workouts_WednesdayId",
+                table: "Schedules");
+
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
@@ -350,25 +512,31 @@ namespace GymBuddyAPI.Migrations
                 name: "ExercisesWorkouts");
 
             migrationBuilder.DropTable(
-                name: "ExericseSets");
+                name: "RefreshTokens");
 
             migrationBuilder.DropTable(
-                name: "RefreshTokens");
+                name: "Reps");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "Workouts");
+                name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "ExericseSets");
 
             migrationBuilder.DropTable(
                 name: "Exercises");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "Workouts");
 
             migrationBuilder.DropTable(
                 name: "UserData");
+
+            migrationBuilder.DropTable(
+                name: "Schedules");
         }
     }
 }

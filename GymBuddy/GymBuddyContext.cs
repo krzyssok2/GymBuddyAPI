@@ -13,6 +13,7 @@ namespace GymBuddyAPI
         public DbSet<UserData> UserData { get; set; }
         public DbSet<Workouts> Workouts { get; set; }
         public DbSet<Exercises> Exercises { get; set; }
+        public DbSet<UserSchedules> Schedules { get; set; }
         public DbSet<ExerciseSets> ExericseSets { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
 
@@ -23,7 +24,6 @@ namespace GymBuddyAPI
             builder.ApplyConfiguration(new UserDataConfiguration());
             builder.ApplyConfiguration(new WorkoutsConfiguration());
             builder.ApplyConfiguration(new ExerciseConfiguration());
-
         }
     }
 }

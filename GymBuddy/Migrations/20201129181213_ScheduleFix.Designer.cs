@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GymBuddyAPI.Migrations
 {
     [DbContext(typeof(GymBuddyContext))]
-    [Migration("20201128145912_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20201129181213_ScheduleFix")]
+    partial class ScheduleFix
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -45,12 +45,6 @@ namespace GymBuddyAPI.Migrations
 
                     b.Property<long?>("ExerciseId")
                         .HasColumnType("bigint");
-
-                    b.Property<int>("Reps")
-                        .HasColumnType("int");
-
-                    b.Property<double>("Weight")
-                        .HasColumnType("float");
 
                     b.HasKey("Id");
 
@@ -111,6 +105,26 @@ namespace GymBuddyAPI.Migrations
                     b.ToTable("RefreshTokens");
                 });
 
+            modelBuilder.Entity("GymBuddyAPI.Entities.Reps", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .UseIdentityColumn();
+
+                    b.Property<long?>("ExerciseSetId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("Weight")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExerciseSetId");
+
+                    b.ToTable("Reps");
+                });
+
             modelBuilder.Entity("GymBuddyAPI.Entities.UserData", b =>
                 {
                     b.Property<long>("Id")
@@ -121,9 +135,61 @@ namespace GymBuddyAPI.Migrations
                     b.Property<string>("User")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<long?>("UserScheduleId")
+                        .HasColumnType("bigint");
+
                     b.HasKey("Id");
 
+                    b.HasIndex("UserScheduleId");
+
                     b.ToTable("UserData");
+                });
+
+            modelBuilder.Entity("GymBuddyAPI.Entities.UserSchedules", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .UseIdentityColumn();
+
+                    b.Property<long?>("FridayId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("MondayId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("SaturdayId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("SundayId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("ThursdayId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("TuesdayId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("WednesdayId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FridayId");
+
+                    b.HasIndex("MondayId");
+
+                    b.HasIndex("SaturdayId");
+
+                    b.HasIndex("SundayId");
+
+                    b.HasIndex("ThursdayId");
+
+                    b.HasIndex("TuesdayId");
+
+                    b.HasIndex("WednesdayId");
+
+                    b.ToTable("Schedules");
                 });
 
             modelBuilder.Entity("GymBuddyAPI.Entities.Workouts", b =>
@@ -134,9 +200,6 @@ namespace GymBuddyAPI.Migrations
                         .UseIdentityColumn();
 
                     b.Property<long?>("UserDataId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("UserId")
                         .HasColumnType("bigint");
 
                     b.Property<string>("WorkoutName")
@@ -378,6 +441,69 @@ namespace GymBuddyAPI.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("GymBuddyAPI.Entities.Reps", b =>
+                {
+                    b.HasOne("GymBuddyAPI.Entities.ExerciseSets", "ExerciseSet")
+                        .WithMany("AllReps")
+                        .HasForeignKey("ExerciseSetId");
+
+                    b.Navigation("ExerciseSet");
+                });
+
+            modelBuilder.Entity("GymBuddyAPI.Entities.UserData", b =>
+                {
+                    b.HasOne("GymBuddyAPI.Entities.UserSchedules", "UserSchedule")
+                        .WithMany()
+                        .HasForeignKey("UserScheduleId");
+
+                    b.Navigation("UserSchedule");
+                });
+
+            modelBuilder.Entity("GymBuddyAPI.Entities.UserSchedules", b =>
+                {
+                    b.HasOne("GymBuddyAPI.Entities.Workouts", "Friday")
+                        .WithMany()
+                        .HasForeignKey("FridayId");
+
+                    b.HasOne("GymBuddyAPI.Entities.Workouts", "Monday")
+                        .WithMany()
+                        .HasForeignKey("MondayId");
+
+                    b.HasOne("GymBuddyAPI.Entities.Workouts", "Saturday")
+                        .WithMany()
+                        .HasForeignKey("SaturdayId");
+
+                    b.HasOne("GymBuddyAPI.Entities.Workouts", "Sunday")
+                        .WithMany()
+                        .HasForeignKey("SundayId");
+
+                    b.HasOne("GymBuddyAPI.Entities.Workouts", "Thursday")
+                        .WithMany()
+                        .HasForeignKey("ThursdayId");
+
+                    b.HasOne("GymBuddyAPI.Entities.Workouts", "Tuesday")
+                        .WithMany()
+                        .HasForeignKey("TuesdayId");
+
+                    b.HasOne("GymBuddyAPI.Entities.Workouts", "Wednesday")
+                        .WithMany()
+                        .HasForeignKey("WednesdayId");
+
+                    b.Navigation("Friday");
+
+                    b.Navigation("Monday");
+
+                    b.Navigation("Saturday");
+
+                    b.Navigation("Sunday");
+
+                    b.Navigation("Thursday");
+
+                    b.Navigation("Tuesday");
+
+                    b.Navigation("Wednesday");
+                });
+
             modelBuilder.Entity("GymBuddyAPI.Entities.Workouts", b =>
                 {
                     b.HasOne("GymBuddyAPI.Entities.UserData", "UserData")
@@ -436,6 +562,11 @@ namespace GymBuddyAPI.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("GymBuddyAPI.Entities.ExerciseSets", b =>
+                {
+                    b.Navigation("AllReps");
                 });
 
             modelBuilder.Entity("GymBuddyAPI.Entities.Exercises", b =>

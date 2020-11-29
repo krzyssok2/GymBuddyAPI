@@ -11,5 +11,6 @@ namespace GymBuddyAPI.Entities
         public long Id { get; set; }
         public string User { get; set; }
         public ICollection<Workouts> Workouts { get; set; }
+        public UserSchedules UserSchedule { get; set; }
     }
 }

@@ -11,6 +11,7 @@ namespace GymBuddyAPI.Models
     public class Exercise
     {
         public string ExerciseName { get; set; }
+        public ExerciseType Type {get;set;}
         public List<Set> Sets { get; set; }
     }
     public class Set

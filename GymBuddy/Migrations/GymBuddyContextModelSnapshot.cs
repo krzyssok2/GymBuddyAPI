@@ -133,9 +133,61 @@ namespace GymBuddyAPI.Migrations
                     b.Property<string>("User")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<long?>("UserScheduleId")
+                        .HasColumnType("bigint");
+
                     b.HasKey("Id");
 
+                    b.HasIndex("UserScheduleId");
+
                     b.ToTable("UserData");
+                });
+
+            modelBuilder.Entity("GymBuddyAPI.Entities.UserSchedules", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .UseIdentityColumn();
+
+                    b.Property<long?>("FridayId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("MondayId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("SaturdayId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("SundayId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("ThursdayId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("TuesdayId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("WednesdayId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FridayId");
+
+                    b.HasIndex("MondayId");
+
+                    b.HasIndex("SaturdayId");
+
+                    b.HasIndex("SundayId");
+
+                    b.HasIndex("ThursdayId");
+
+                    b.HasIndex("TuesdayId");
+
+                    b.HasIndex("WednesdayId");
+
+                    b.ToTable("Schedules");
                 });
 
             modelBuilder.Entity("GymBuddyAPI.Entities.Workouts", b =>
@@ -394,6 +446,60 @@ namespace GymBuddyAPI.Migrations
                         .HasForeignKey("ExerciseSetId");
 
                     b.Navigation("ExerciseSet");
+                });
+
+            modelBuilder.Entity("GymBuddyAPI.Entities.UserData", b =>
+                {
+                    b.HasOne("GymBuddyAPI.Entities.UserSchedules", "UserSchedule")
+                        .WithMany()
+                        .HasForeignKey("UserScheduleId");
+
+                    b.Navigation("UserSchedule");
+                });
+
+            modelBuilder.Entity("GymBuddyAPI.Entities.UserSchedules", b =>
+                {
+                    b.HasOne("GymBuddyAPI.Entities.Workouts", "Friday")
+                        .WithMany()
+                        .HasForeignKey("FridayId");
+
+                    b.HasOne("GymBuddyAPI.Entities.Workouts", "Monday")
+                        .WithMany()
+                        .HasForeignKey("MondayId");
+
+                    b.HasOne("GymBuddyAPI.Entities.Workouts", "Saturday")
+                        .WithMany()
+                        .HasForeignKey("SaturdayId");
+
+                    b.HasOne("GymBuddyAPI.Entities.Workouts", "Sunday")
+                        .WithMany()
+                        .HasForeignKey("SundayId");
+
+                    b.HasOne("GymBuddyAPI.Entities.Workouts", "Thursday")
+                        .WithMany()
+                        .HasForeignKey("ThursdayId");
+
+                    b.HasOne("GymBuddyAPI.Entities.Workouts", "Tuesday")
+                        .WithMany()
+                        .HasForeignKey("TuesdayId");
+
+                    b.HasOne("GymBuddyAPI.Entities.Workouts", "Wednesday")
+                        .WithMany()
+                        .HasForeignKey("WednesdayId");
+
+                    b.Navigation("Friday");
+
+                    b.Navigation("Monday");
+
+                    b.Navigation("Saturday");
+
+                    b.Navigation("Sunday");
+
+                    b.Navigation("Thursday");
+
+                    b.Navigation("Tuesday");
+
+                    b.Navigation("Wednesday");
                 });
 
             modelBuilder.Entity("GymBuddyAPI.Entities.Workouts", b =>

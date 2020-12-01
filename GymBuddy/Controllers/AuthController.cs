@@ -97,9 +97,11 @@ namespace WeatherForecastAPI.Controllers
             {
                 _context.UserData.Add(new UserData
                 {
-                    User=request.Email,
+                    User = request.Email,
+                    UserSchedule = new UserSchedule()
                 });
                 _context.SaveChanges();
+
             }
             return Ok();
         }

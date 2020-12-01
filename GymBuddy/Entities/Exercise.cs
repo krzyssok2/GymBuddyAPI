@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace GymBuddyAPI.Entities
 {
-    public class Exercises
+    public class Exercise
     {
         public long Id { get; set; }
         public string Name { get; set; }
         public ExerciseType ExerciseType { get; set; }
         public string Creator { get; set; }
-        public ICollection<ExerciseSets> Sets { get; set; }
-        public ICollection<Workouts> Workouts { get; set; }
+        public ICollection<ExerciseSet> Sets { get; set; }
+        public ICollection<Workout> Workouts { get; set; }
     }
 }

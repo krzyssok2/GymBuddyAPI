@@ -8,11 +8,11 @@ namespace GymBuddyAPI.Models
 {
     public class AllWorkouts
     {
-        public List<Workout> Workouts { get; set; }
+        public List<WorkoutModel> Workouts { get; set; }
     }
-    public class Workout
+    public class WorkoutModel
     {
         public string Name { get; set; }
-        public List<Exercise> Exercises {get;set;}
+        public List<ExerciseModel> Exercises {get;set;}
     }
 }

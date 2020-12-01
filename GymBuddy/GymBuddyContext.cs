@@ -11,10 +11,10 @@ namespace GymBuddyAPI
         public GymBuddyContext(DbContextOptions options) : base(options) { }
 
         public DbSet<UserData> UserData { get; set; }
-        public DbSet<Workouts> Workouts { get; set; }
-        public DbSet<Exercises> Exercises { get; set; }
-        public DbSet<UserSchedules> Schedules { get; set; }
-        public DbSet<ExerciseSets> ExericseSets { get; set; }
+        public DbSet<Workout> Workouts { get; set; }
+        public DbSet<Exercise> Exercises { get; set; }
+        public DbSet<UserSchedule> Schedules { get; set; }
+        public DbSet<ExerciseSet> ExericseSets { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)

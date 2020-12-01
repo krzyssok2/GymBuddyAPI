@@ -5,20 +5,20 @@ namespace GymBuddyAPI.Models
 {
     public class AllExercises
     {
-        public List<Exercise> Exercises { get; set; }
+        public List<ExerciseModel> Exercises { get; set; }
     }
 
-    public class Exercise
+    public class ExerciseModel
     {
         public string ExerciseName { get; set; }
         public ExerciseType Type {get;set;}
-        public List<Set> Sets { get; set; }
+        public List<SetModel> Sets { get; set; }
     }
-    public class Set
+    public class SetModel
     {
-        public List<Rep> Reps;
+        public List<RepModel> Reps;
     }
-    public class Rep
+    public class RepModel
     {
         public int Weights { get; set; }
     }

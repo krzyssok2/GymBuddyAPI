@@ -4,14 +4,16 @@ using GymBuddyAPI;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace GymBuddyAPI.Migrations
 {
     [DbContext(typeof(GymBuddyContext))]
-    partial class GymBuddyContextModelSnapshot : ModelSnapshot
+    [Migration("20201201091357_TableNameChangs")]
+    partial class TableNameChangs
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GymBuddyAPI.EntityConfiguration
 {
-    public class WorkoutsConfiguration : IEntityTypeConfiguration<Workouts>
+    public class WorkoutsConfiguration : IEntityTypeConfiguration<Workout>
     {
-        public void Configure(EntityTypeBuilder<Workouts> builder)
+        public void Configure(EntityTypeBuilder<Workout> builder)
         {
             builder.HasMany(i => i.Exercises)
                 .WithMany(i => i.Workouts);

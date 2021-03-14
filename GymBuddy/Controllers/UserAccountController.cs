@@ -47,9 +47,11 @@ namespace GymBuddy.Controllers
             {
                 Workouts = result.Select(i => new GymBuddyAPI.Models.WorkoutModel()
                 {
+                    Id=i.Id,
                     Name = i.WorkoutName,
                     Exercises = i.Exercises.Select(j => new ExerciseModel()
                     {
+                        Id=j.Id,
                         ExerciseName = j.Name,
                         Type= j.ExerciseType,
                         Sets = j.Sets.Select(k => new SetModel()
@@ -136,6 +138,7 @@ namespace GymBuddy.Controllers
                 .Where(i => i.UserData.User == userName)
                 .Select(i => new WorkoutModel
                 {
+                    Id=i.Id,
                     Name = i.WorkoutName,
                 }).ToList()
             };

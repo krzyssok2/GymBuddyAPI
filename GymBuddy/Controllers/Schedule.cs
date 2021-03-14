@@ -67,9 +67,11 @@ namespace GymBuddyAPI.Controllers
 
             var answer = new Models.WorkoutModel()
             {
+                Id = result.Id,
                 Name = result.WorkoutName,
                 Exercises = result.Exercises.Select(i => new ExerciseModel()
                 {
+                    Id=i.Id,
                     ExerciseName = i.Name,
                     Type = i.ExerciseType,
                     Sets = i.Sets.Select(j => new SetModel()
@@ -124,9 +126,11 @@ namespace GymBuddyAPI.Controllers
 
             var answer = new Models.WorkoutModel()
             {
+                Id=result.Id,
                 Name = result.WorkoutName,
                 Exercises = result.Exercises.Select(i => new ExerciseModel()
                 {
+                    Id=i.Id,
                     ExerciseName = i.Name,
                     Type = i.ExerciseType,
                     Sets = i.Sets.Select(j => new SetModel()

@@ -137,6 +137,7 @@ namespace GymBuddy.Controllers
             {
                 Exercises=exercises.Select(i=> new ExerciseModel()
                 {
+                    Id=i.Id,
                     ExerciseName=i.Name,
                     Type=i.ExerciseType,
                     Sets=i.Sets.Select(j=>new SetModel

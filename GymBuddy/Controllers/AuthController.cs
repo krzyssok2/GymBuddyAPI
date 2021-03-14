@@ -6,6 +6,7 @@ using GymBuddyAPI;
 using GymBuddyAPI.Services;
 using GymBuddyAPI.Entities;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Cors;
 
 namespace WeatherForecastAPI.Controllers
 {
@@ -30,6 +31,7 @@ namespace WeatherForecastAPI.Controllers
         /// <response code="200">Successfully logged in</response>   
         /// <response code="400">Wasn't able to log in</response>   
         [HttpPost("Login")]
+        [EnableCors("AllowAll")]
         [ProducesResponseType(typeof(AuthSuccessResponse), 200)]
         public async Task<ActionResult> LoginAsync(AuthAccount request)
         {

@@ -98,6 +98,17 @@ namespace GymBuddy
             services.AddControllers().AddNewtonsoftJson(options =>
             options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
             services.AddScoped<AuthServices>();
+
+            services.AddCors(c =>
+            {
+                c.AddPolicy("AllowAll", options =>
+                {
+                    options.AllowAnyOrigin();
+                    options.AllowAnyHeader();
+                    options.AllowAnyMethod();
+                });
+
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -124,6 +135,12 @@ namespace GymBuddy
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+            });
+            app.UseCors(options =>
+            {
+                options.AllowAnyOrigin();
+                options.AllowAnyHeader();
+                options.AllowAnyMethod();
             });
         }
     }

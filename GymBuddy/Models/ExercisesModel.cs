@@ -17,6 +17,7 @@ namespace GymBuddyAPI.Models
     }
     public class SetModel
     {
+        public long Id { get; set; }
         public int RepCount { get; set; }
         public int Weights { get; set; }
     }

@@ -56,6 +56,7 @@ namespace GymBuddy.Controllers
                         Type= j.ExerciseType,
                         Sets = j.Sets.Select(k => new SetModel()
                         {
+                            Id=k.Id,
                             RepCount= k.RepCount,
                             Weights=k.Weight
                         }).ToList()
@@ -65,9 +66,38 @@ namespace GymBuddy.Controllers
 
             return Ok(allworkouts);
         }
-        
-        
-        
+
+        [HttpGet("workouts/{id}")]
+        public ActionResult<AllWorkouts> GetAllWorkouts(long id)
+        {
+            var userName = User.Claims.Single(a => a.Type == ClaimTypes.NameIdentifier).Value;
+            var workout = _context.Workouts.Where(i => i.Id==id&&i.UserData.User==userName).First();
+            if (workout == null) return NotFound("workout not found");
+
+
+            WorkoutModel responseWorkout = new WorkoutModel
+            {
+                Id=workout.Id,
+                Name=workout.WorkoutName,
+                Exercises= workout.Exercises.Select(i=> new ExerciseModel
+                {
+                    ExerciseName=i.Name,
+                    Id=i.Id,
+                    Type=i.ExerciseType,
+                    Sets=i.Sets.Select(j=> new SetModel
+                    {
+                        Id=j.Id,
+                        RepCount=j.RepCount,
+                        Weights=j.Weight
+                    }).ToList()
+                }).ToList()
+            };
+
+            return Ok(responseWorkout);
+        }
+
+
+
         [HttpPut("workouts")]
         public ActionResult<AllWorkouts> PutAllWorkouts(UpdateWorkout updateWorkout)
         {
@@ -171,6 +201,7 @@ namespace GymBuddy.Controllers
                     Type=i.ExerciseType,
                     Sets=i.Sets.Select(j=>new SetModel
                     {
+                        Id=j.Id,
                         RepCount=j.RepCount,
                         Weights=j.Weight,
                     }).ToList()
@@ -179,6 +210,34 @@ namespace GymBuddy.Controllers
 
             return Ok(allExercises);
         }
+
+        [HttpGet("exercises/{id}")]
+        public ActionResult<AllExercises> GetExercises(long id)
+        {
+            var userName = User.Claims.Single(a => a.Type == ClaimTypes.NameIdentifier).Value;
+
+            var exercise = _context.Exercises
+                .Where(i => i.Creator == userName&&i.Id==id).Include(i => i.Sets)
+                .First();
+
+            if (exercise == null) return NotFound("Exercise was not found");
+
+
+            var exerciseResponse = new ExerciseModel()
+            {
+                ExerciseName=exercise.Name,
+                Id=exercise.Id,
+                Type=exercise.ExerciseType,
+                Sets= exercise.Sets.Select(i=> new SetModel
+                {
+                    RepCount=i.RepCount,
+                    Weights=i.Weight
+                }).ToList()
+            };
+
+            return Ok(exerciseResponse);
+        }
+
         [HttpPut("exercises/{id}")]
         public ActionResult<ExerciseModel> PutExercise(long id, ExerciseModel exercise)
         {
@@ -196,6 +255,7 @@ namespace GymBuddy.Controllers
                 Workouts=neededExercise.Workouts,
                 Sets = exercise.Sets.Select(i => new ExerciseSet
                 {
+                    Id=i.Id,
                     Weight=i.Weights,
                     RepCount=i.RepCount,
                 }).ToList()
@@ -227,7 +287,7 @@ namespace GymBuddy.Controllers
             var userName = User.Claims.Single(a => a.Type == ClaimTypes.NameIdentifier).Value;
             
             var exercise= _context.Exercises.First(i=>i.Creator==userName&&i.Id==id);
-            if (exercise == null) return Ok("Failed");
+            if (exercise == null) return NotFound("Exercise was not found");
             var delete = _context.Exercises.Remove(exercise);
 
             _context.SaveChanges();

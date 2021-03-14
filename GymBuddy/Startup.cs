@@ -132,15 +132,15 @@ namespace GymBuddy
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
             app.UseCors(options =>
             {
                 options.AllowAnyOrigin();
                 options.AllowAnyHeader();
                 options.AllowAnyMethod();
+            });
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
             });
         }
     }

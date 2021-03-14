@@ -37,7 +37,7 @@ namespace GymBuddy.Controllers
             var UserData = _context.UserData.Where(i => i.User == userName).First();
             var result = _context.Workouts
                 .Where(i => i.UserData == UserData)
-                .Include(i=>i.Exercises).ThenInclude(i=>i.Sets).ThenInclude(i=>i.AllReps)
+                .Include(i=>i.Exercises).ThenInclude(i=>i.Sets)
                 .ToList();
 
             AllWorkouts allworkouts = new AllWorkouts
@@ -51,10 +51,8 @@ namespace GymBuddy.Controllers
                         Type= j.ExerciseType,
                         Sets = j.Sets.Select(k => new SetModel()
                         {
-                            Reps = k.AllReps.Select(l => new RepModel()
-                            {
-                                Weights = l.Weight
-                            }).ToList()
+                            RepCount= k.RepCount,
+                            Weights=k.Weight
                         }).ToList()
                     }).ToList()
                 }).ToList()
@@ -129,7 +127,7 @@ namespace GymBuddy.Controllers
             var userName = User.Claims.Single(a => a.Type == ClaimTypes.NameIdentifier).Value;
 
             var exercises = _context.Exercises
-                .Where(i => i.Creator == userName).Include(i=>i.Sets).ThenInclude(i=>i.AllReps)
+                .Where(i => i.Creator == userName).Include(i=>i.Sets)
                 .ToList();
 
 
@@ -142,10 +140,8 @@ namespace GymBuddy.Controllers
                     Type=i.ExerciseType,
                     Sets=i.Sets.Select(j=>new SetModel
                     {
-                        Reps=j.AllReps.Select(k=> new RepModel()
-                        {
-                            Weights=k.Weight
-                        }).ToList()
+                        RepCount=j.RepCount,
+                        Weights=j.Weight
                     }).ToList()
                 }).ToList()
             };
@@ -168,10 +164,8 @@ namespace GymBuddy.Controllers
                 Workouts=neededExercise.Workouts,
                 Sets = exercise.Sets.Select(i => new ExerciseSet
                 {
-                    AllReps = i.Reps.Select(j => new Rep
-                    {
-                        Weight = j.Weights
-                    }).ToList()
+                    Weight=i.Weights,
+                    RepCount=i.RepCount
                 }).ToList()
             };
             _context.SaveChanges();

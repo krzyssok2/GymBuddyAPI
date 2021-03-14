@@ -8,7 +8,8 @@ namespace GymBuddyAPI.Entities
     public class ExerciseSet
     {
         public long Id { get; set; }
-        public ICollection<Rep> AllReps { get; set; }
+        public int RepCount { get; set; }
+        public int Weight { get; set; }
         public Exercise Exercise { get; set; }
     }
 }

@@ -31,7 +31,7 @@ namespace GymBuddyAPI.Controllers
             var userName = User.Claims.Single(a => a.Type == ClaimTypes.NameIdentifier).Value;
 
             var Schedule = _context.UserData
-                .Include(i => i.Workouts).ThenInclude(i => i.Exercises).ThenInclude(i => i.Sets).ThenInclude(i => i.AllReps)
+                .Include(i => i.Workouts).ThenInclude(i => i.Exercises).ThenInclude(i => i.Sets)
                 .Include(i => i.UserSchedule)
                 .Where(i => i.User == userName)
                 .First().UserSchedule;
@@ -73,10 +73,8 @@ namespace GymBuddyAPI.Controllers
                     Type = i.ExerciseType,
                     Sets = i.Sets.Select(j => new SetModel()
                     {
-                        Reps = j.AllReps.Select(k => new RepModel()
-                        {
-                            Weights = k.Weight
-                        }).ToList()
+                        Weights=j.Weight,
+                        RepCount=j.RepCount
                     }).ToList()
                 }).ToList()
             };
@@ -89,7 +87,7 @@ namespace GymBuddyAPI.Controllers
             var userName = User.Claims.Single(a => a.Type == ClaimTypes.NameIdentifier).Value;
 
             var Schedule = _context.UserData
-                .Include(i => i.Workouts).ThenInclude(i => i.Exercises).ThenInclude(i => i.Sets).ThenInclude(i => i.AllReps)
+                .Include(i => i.Workouts).ThenInclude(i => i.Exercises).ThenInclude(i => i.Sets)
                 .Include(i => i.UserSchedule)
                 .Where(i => i.User == userName)
                 .First().UserSchedule;
@@ -129,10 +127,8 @@ namespace GymBuddyAPI.Controllers
                     Type = i.ExerciseType,
                     Sets = i.Sets.Select(j => new SetModel()
                     {
-                        Reps = j.AllReps.Select(k => new RepModel()
-                        {
-                            Weights = k.Weight
-                        }).ToList()
+                        Weights=j.Weight,
+                        RepCount=j.RepCount
                     }).ToList()
                 }).ToList()
             };

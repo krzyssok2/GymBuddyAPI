@@ -147,7 +147,7 @@ namespace GymBuddyAPI.Controllers
         {
             var userName = User.Claims.Single(a => a.Type == ClaimTypes.NameIdentifier).Value;
 
-            var value = _context.UserData.Include(i=>i.UserSchedule).Where(i => i.User == userName).First().UserSchedule;
+            var value = _context.UserData.Include(i=>i.UserSchedule).Include(i=>i.Workouts).Where(i => i.User == userName).First().UserSchedule;
             if (value == null) return NotFound("Schedule not found");
 
             var result = new Entities.Workout();
@@ -186,6 +186,7 @@ namespace GymBuddyAPI.Controllers
             var userName = User.Claims.Single(a => a.Type == ClaimTypes.NameIdentifier).Value;
             var value = _context.UserData
                 .Include(i=>i.UserSchedule)
+                .Include(i => i.Workouts)
                 .First(i => i.User == userName)
                 .UserSchedule;
             if (value == null) return NotFound("Schedule not found");

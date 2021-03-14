@@ -185,6 +185,7 @@ namespace GymBuddyAPI.Controllers
         {
             var userName = User.Claims.Single(a => a.Type == ClaimTypes.NameIdentifier).Value;
             var value = _context.UserData
+                .Include(i=>i.UserSchedule)
                 .First(i => i.User == userName)
                 .UserSchedule;
             if (value == null) return NotFound("Schedule not found");

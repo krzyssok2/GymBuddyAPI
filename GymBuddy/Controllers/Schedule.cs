@@ -35,6 +35,7 @@ namespace GymBuddyAPI.Controllers
                 .Include(i => i.UserSchedule)
                 .Where(i => i.User == userName)
                 .First().UserSchedule;
+            if (Schedule == null) return NotFound("Schedule not found");
 
             string day = DateTime.Now.DayOfWeek.ToString();
 
@@ -91,7 +92,7 @@ namespace GymBuddyAPI.Controllers
                 .Include(i => i.UserSchedule)
                 .Where(i => i.User == userName)
                 .First().UserSchedule;
-
+            if (Schedule == null) return NotFound("Schedule not found");
             var result = new Entities.Workout();
             switch (day)
             {
@@ -115,6 +116,9 @@ namespace GymBuddyAPI.Controllers
                     break;
                 case 7:
                     result = Schedule.Sunday;
+                    break;
+                default:
+                    return BadRequest("Such day doesnt exist, value should be between 1-7");
                     break;
             }
 
@@ -140,6 +144,7 @@ namespace GymBuddyAPI.Controllers
             var userName = User.Claims.Single(a => a.Type == ClaimTypes.NameIdentifier).Value;
 
             var value = _context.UserData.Where(i => i.User == userName).First().UserSchedule;
+            if (value == null) return NotFound("Schedule not found");
 
             var result = new Entities.Workout();
             switch (day)
@@ -178,6 +183,7 @@ namespace GymBuddyAPI.Controllers
             var value = _context.UserData
                 .First(i => i.User == userName)
                 .UserSchedule;
+            if (value == null) return NotFound("Schedule not found");
 
             switch (day)
             {

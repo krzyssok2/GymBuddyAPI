@@ -19,6 +19,8 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using Newtonsoft.Json;
 using System.Text.Json.Serialization;
+using GymBuddyAPI.ExceptionHandler;
+
 namespace GymBuddy
 {
     public class Startup
@@ -118,6 +120,8 @@ namespace GymBuddy
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseMiddleware<ExceptionMiddleware>();
 
             app.UseSwagger();
 

@@ -71,7 +71,9 @@ namespace GymBuddy.Controllers
         public ActionResult<AllWorkouts> GetAllWorkouts(long id)
         {
             var userName = User.Claims.Single(a => a.Type == ClaimTypes.NameIdentifier).Value;
-            var workout = _context.Workouts.Where(i => i.Id==id&&i.UserData.User==userName).First();
+            var workout = _context.Workouts
+                .Include(i=>i.Exercises).ThenInclude(i=>i.Sets)
+                .Where(i => i.Id==id&&i.UserData.User==userName).First();
             if (workout == null) return NotFound("workout not found");
 
 
@@ -104,7 +106,10 @@ namespace GymBuddy.Controllers
             var userName = User.Claims.Single(a => a.Type == ClaimTypes.NameIdentifier).Value;
             var currentUsser = _context.UserData.First(i => i.User == userName);
 
-            var value = _context.Workouts.Where(i => i.UserData.User == userName && i.Id == updateWorkout.id).First();
+            var value = _context.Workouts
+                .Where(i => i.UserData.User == userName && i.Id == updateWorkout.id)
+                .Include(i=>i.Exercises)
+                .ThenInclude(i=>i.Sets).First();
             _context.Workouts.Remove(value);
 
             var UpdateWorkout = new Workout

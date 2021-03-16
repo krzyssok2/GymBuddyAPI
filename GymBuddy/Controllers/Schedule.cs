@@ -25,6 +25,60 @@ namespace GymBuddyAPI.Controllers
         {
             _context = context;
         }
+        [HttpGet]
+        public ActionResult<Models.WorkoutModel> GetSchedule()
+        {
+            var userName = User.Claims.Single(a => a.Type == ClaimTypes.NameIdentifier).Value;
+
+            var schedule = _context.UserData
+                .Include(i => i.Workouts)
+                .Include(i => i.UserSchedule)
+                .Where(i => i.User == userName)
+                .First().UserSchedule;
+            if (schedule == null) return NotFound("Schedule not found");
+
+            var answer = new ScheduleModel
+            {
+                Id = schedule.Id,
+                WorkoutList= new List<DayWorkout> { }
+            };
+            if (schedule.Monday != null) answer.WorkoutList.Add(new DayWorkout
+            {
+                Day = DaysEnum.Monday,
+                WorkoutId = schedule.Monday.Id
+            });
+            if (schedule.Tuesday != null) answer.WorkoutList.Add(new DayWorkout
+            {
+                Day = DaysEnum.Tuesday,
+                WorkoutId = schedule.Tuesday.Id
+            });
+            if (schedule.Wednesday != null) answer.WorkoutList.Add(new DayWorkout
+            {
+                Day = DaysEnum.Wednesday,
+                WorkoutId = schedule.Wednesday.Id
+            });
+            if (schedule.Thursday != null) answer.WorkoutList.Add(new DayWorkout
+            {
+                Day = DaysEnum.Thursday,
+                WorkoutId = schedule.Thursday.Id
+            });
+            if (schedule.Friday != null) answer.WorkoutList.Add(new DayWorkout
+            {
+                Day = DaysEnum.Friday,
+                WorkoutId = schedule.Friday.Id
+            });
+            if (schedule.Saturday != null) answer.WorkoutList.Add(new DayWorkout
+            {
+                Day = DaysEnum.Saturday,
+                WorkoutId = schedule.Saturday.Id
+            });
+            if (schedule.Sunday != null) answer.WorkoutList.Add(new DayWorkout
+            {
+                Day = DaysEnum.Sunday,
+                WorkoutId = schedule.Sunday.Id
+            });
+            return Ok(answer);
+        }
         [HttpGet("today")]
         public ActionResult<Models.WorkoutModel> GetTodaysWorkout()
         {

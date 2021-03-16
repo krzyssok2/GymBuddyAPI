@@ -118,7 +118,7 @@ namespace GymBuddyAPI.Controllers
                     result = Schedule.Sunday;
                     break;
             }
-
+            if (result == null) return NotFound("No workout this day");
             var answer = new Models.WorkoutModel()
             {
                 Id = result.Id,
@@ -177,7 +177,7 @@ namespace GymBuddyAPI.Controllers
                     return BadRequest("Such day doesnt exist, value should be between 1-7");
                     break;
             }
-
+            if (result == null) return NotFound("No workout this day");
             var answer = new Models.WorkoutModel()
             {
                 Id=result.Id,

@@ -101,7 +101,7 @@ namespace GymBuddy.Controllers
 
 
         [HttpPut("workouts")]
-        public ActionResult<AllWorkouts> PutAllWorkouts(UpdateWorkout updateWorkout)
+        public ActionResult<Workout> PutAllWorkouts(UpdateWorkout updateWorkout)
         {
             var userName = User.Claims.Single(a => a.Type == ClaimTypes.NameIdentifier).Value;
             var currentUsser = _context.UserData.First(i => i.User == userName);
@@ -110,26 +110,11 @@ namespace GymBuddy.Controllers
                 .Where(i => i.UserData.User == userName && i.Id == updateWorkout.id)
                 .Include(i=>i.Exercises)
                 .ThenInclude(i=>i.Sets).First();
-            _context.Workouts.Remove(value);
-
-            var UpdateWorkout = new Workout
-            {
-                UserData = currentUsser,
-                WorkoutName = updateWorkout.name,
-                Exercises = value.Exercises.Select(i => new Exercise
-                {
-                    ExerciseType = i.ExerciseType,
-                    Name = i.Name,
-                    Creator = i.Creator,
-                    Sets = i.Sets.Select(j => new ExerciseSet
-                    {
-                        RepCount = j.RepCount,
-                        Weight = j.Weight
-                    }).ToList()
-                }).ToList()
-            };
+            if (value == null) return NotFound("Not found");
 
 
+            value.WorkoutName = updateWorkout.name;
+            _context.SaveChanges();
 
             return Ok();
         }

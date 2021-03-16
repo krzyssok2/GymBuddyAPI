@@ -235,7 +235,7 @@ namespace GymBuddyAPI.Controllers
         }
 
         [HttpPut("{day}")]
-        public ActionResult<UserSchedule> PutWorkoutFromDay(int day, string workoutName)
+        public ActionResult<UserSchedule> PutWorkoutFromDay(int day, long workoutId)
         {
             var userName = User.Claims.Single(a => a.Type == ClaimTypes.NameIdentifier).Value;
             var value = _context.UserData
@@ -248,25 +248,25 @@ namespace GymBuddyAPI.Controllers
             switch (day)
             {
                 case 1:
-                    value.Monday = _context.Workouts.Include(i => i.UserData).First(i => i.WorkoutName == workoutName && i.UserData.User == userName);
+                    value.Monday = _context.Workouts.Include(i => i.UserData).First(i => i.Id == workoutId && i.UserData.User == userName);
                     break;
                 case 2:
-                    value.Tuesday = _context.Workouts.Include(i => i.UserData).First(i => i.WorkoutName == workoutName && i.UserData.User == userName);
+                    value.Tuesday = _context.Workouts.Include(i => i.UserData).First(i => i.Id == workoutId && i.UserData.User == userName);
                     break;
                 case 3:
-                    value.Wednesday = _context.Workouts.Include(i => i.UserData).First(i => i.WorkoutName == workoutName && i.UserData.User == userName);
+                    value.Wednesday = _context.Workouts.Include(i => i.UserData).First(i => i.Id == workoutId && i.UserData.User == userName);
                     break;
                 case 4:
-                    value.Thursday = _context.Workouts.Include(i => i.UserData).First(i => i.WorkoutName == workoutName && i.UserData.User == userName);
+                    value.Thursday = _context.Workouts.Include(i => i.UserData).First(i => i.Id == workoutId && i.UserData.User == userName);
                     break;
                 case 5:
-                    value.Friday = _context.Workouts.Include(i => i.UserData).First(i => i.WorkoutName == workoutName && i.UserData.User == userName);
+                    value.Friday = _context.Workouts.Include(i => i.UserData).First(i => i.Id == workoutId && i.UserData.User == userName);
                     break;
                 case 6:
-                    value.Saturday = _context.Workouts.Include(i => i.UserData).First(i => i.WorkoutName == workoutName && i.UserData.User == userName);
+                    value.Saturday = _context.Workouts.Include(i => i.UserData).First(i => i.Id == workoutId && i.UserData.User == userName);
                     break;
                 case 7:
-                    value.Sunday = _context.Workouts.Include(i => i.UserData).First(i => i.WorkoutName == workoutName && i.UserData.User == userName);
+                    value.Sunday = _context.Workouts.Include(i => i.UserData).First(i => i.Id == workoutId && i.UserData.User == userName);
                     break;
             }
             _context.SaveChanges();

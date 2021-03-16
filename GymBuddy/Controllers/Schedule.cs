@@ -26,7 +26,7 @@ namespace GymBuddyAPI.Controllers
             _context = context;
         }
         [HttpGet]
-        public ActionResult<Models.WorkoutModel> GetSchedule()
+        public ActionResult<Models.ScheduleModel> GetSchedule()
         {
             var userName = User.Claims.Single(a => a.Type == ClaimTypes.NameIdentifier).Value;
 

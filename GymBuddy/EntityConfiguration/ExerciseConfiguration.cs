@@ -9,7 +9,7 @@ namespace GymBuddyAPI.EntityConfiguration
         public void Configure(EntityTypeBuilder<Exercise> builder)
         {
             builder.HasMany(i => i.Sets)
-                .WithOne(i => i.Exercise);
+                .WithOne(i => i.Exercise).OnDelete(DeleteBehavior.Cascade);
             builder.Property(i => i.Creator).IsRequired(false);
         }
     }

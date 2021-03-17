@@ -10,6 +10,7 @@ namespace GymBuddyAPI.EntityConfiguration
         {
             builder.HasMany(i => i.Exercises)
                 .WithMany(i => i.Workouts);
+            
         }
     }
 }

@@ -230,29 +230,57 @@ namespace GymBuddy.Controllers
         }
 
         [HttpPut("exercises/{id}")]
-        public ActionResult<ExerciseModel> PutExercise(long id, ExerciseModel exercise)
+        public ActionResult<ExerciseModel> PutExercise(long id, PutExerciseModel exercise)
         {
             var userName = User.Claims.Single(a => a.Type == ClaimTypes.NameIdentifier).Value;
-            var neededExercise = _context.Exercises.AsNoTracking().First(i => i.Id == id);
+            var neededExercise = _context.Exercises.Include(i=>i.Sets).First(i => i.Id == id);
             if (neededExercise == null) return NotFound("Exercise not found");
-            _context.Remove(neededExercise);
 
-            var Updateexercise = new Exercise()
+            neededExercise.ExerciseType = exercise.Type;
+            neededExercise.Name = exercise.ExerciseName;
+            var sets = neededExercise.Sets.ToList();
+            foreach(var set in sets)
             {
-                Id = neededExercise.Id,
-                ExerciseType = exercise.Type,
-                Creator = userName,
-                Name = exercise.ExerciseName,
-                Workouts=neededExercise.Workouts,
-                Sets = exercise.Sets.Select(i => new ExerciseSet
+                neededExercise.Sets.Remove(set);
+            }
+
+            
+            foreach(var set in exercise.Sets)
+            {
+                if(set.Id==0)
                 {
-                    Id=i.Id,
-                    Weight=i.Weights,
-                    RepCount=i.RepCount,
+                    neededExercise.Sets.Add(new ExerciseSet
+                    {
+                        RepCount = set.RepCount,
+                        Weight = set.Weights
+                    });
+                }
+                else
+                {
+                    neededExercise.Sets.Add(new ExerciseSet
+                    {
+                        Id=set.Id,
+                        RepCount = set.RepCount,
+                        Weight = set.Weights
+                    });
+                }
+                
+            }    
+            _context.SaveChanges();
+            var returnExercise = _context.Exercises.Include(i => i.Sets).First(i => i.Id == id);
+            var returnExerciseTransformed = new ExerciseModel
+            {
+                Id = returnExercise.Id,
+                ExerciseName = returnExercise.Name,
+                Type = returnExercise.ExerciseType,
+                Sets = returnExercise.Sets.Select(i => new SetModel
+                {
+                    Id = i.Id,
+                    RepCount = i.RepCount,
+                    Weights = i.Weight
                 }).ToList()
             };
-            _context.SaveChanges();
-            return Ok(exercise);
+            return Ok(returnExerciseTransformed);
         }
         [HttpPost("exercises")]
         public ActionResult<ExerciseModel> PostExercise(RequestExerciseModel exercise)

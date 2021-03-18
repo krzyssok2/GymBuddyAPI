@@ -220,6 +220,7 @@ namespace GymBuddy.Controllers
                 Type=exercise.ExerciseType,
                 Sets= exercise.Sets.Select(i=> new SetModel
                 {
+                    Id=i.Id,
                     RepCount=i.RepCount,
                     Weights=i.Weight
                 }).ToList()

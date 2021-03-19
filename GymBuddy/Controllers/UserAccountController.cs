@@ -145,6 +145,18 @@ namespace GymBuddy.Controllers
             var value = _context.Workouts.First(i => i.UserData.User == userName && i.Id==id);
             if (value == null) return NotFound("Workout not found");
 
+            var schedule = _context.UserData.Include(i => i.UserSchedule).First(i => i.User == userName).UserSchedule;
+
+            if (schedule.Monday == value) schedule.Monday = null;
+            if (schedule.Tuesday == value) schedule.Tuesday = null;
+            if (schedule.Wednesday == value) schedule.Wednesday = null;
+            if (schedule.Thursday == value) schedule.Thursday = null;
+            if (schedule.Friday == value) schedule.Friday = null;
+            if (schedule.Saturday == value) schedule.Saturday = null;
+            if (schedule.Sunday == value) schedule.Sunday = null;
+
+            _context.SaveChanges();
+
             var delete = _context.Workouts.Remove(value);
 
             var databaseFunction = _context.Workouts.Include(i => i.UserData).Select(i => i.UserData.User == userName).ToList();

@@ -130,6 +130,7 @@ namespace GymBuddyAPI.Controllers
                     Type = i.ExerciseType,
                     Sets = i.Sets.Select(j => new SetModel()
                     {
+                        Id=j.Id,
                         Weights=j.Weight,
                         RepCount=j.RepCount
                     }).ToList()
@@ -189,6 +190,7 @@ namespace GymBuddyAPI.Controllers
                     Type = i.ExerciseType,
                     Sets = i.Sets.Select(j => new SetModel()
                     {
+                        Id=j.Id,
                         Weights=j.Weight,
                         RepCount=j.RepCount
                     }).ToList()

@@ -7,6 +7,7 @@ using GymBuddyAPI;
 using GymBuddyAPI.Entities;
 using GymBuddyAPI.Models;
 using GymBuddyAPI.Models.RequestModels;
+using GymBuddyAPI.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -27,7 +28,8 @@ namespace GymBuddy.Controllers
             _context = context;
         }
 
-       
+
+        UserDataService userDataService = new UserDataService();
         [HttpGet("workouts")]
         public ActionResult<AllWorkouts> GetAllWorkouts()
         {
@@ -43,26 +45,8 @@ namespace GymBuddy.Controllers
                 .ToList();
             if (result == null) return NotFound("Workouts not found");
 
-            AllWorkouts allworkouts = new AllWorkouts
-            {
-                Workouts = result.Select(i => new GymBuddyAPI.Models.WorkoutModel()
-                {
-                    Id=i.Id,
-                    Name = i.WorkoutName,
-                    Exercises = i.Exercises.Select(j => new ExerciseModel()
-                    {
-                        Id=j.Id,
-                        ExerciseName = j.Name,
-                        Type= j.ExerciseType,
-                        Sets = j.Sets.Select(k => new SetModel()
-                        {
-                            Id=k.Id,
-                            RepCount= k.RepCount,
-                            Weights=k.Weight
-                        }).ToList()
-                    }).ToList()
-                }).ToList()
-            };
+
+            var allworkouts = userDataService.GetWorkoutTransformation(result);
 
             return Ok(allworkouts);
         }
@@ -141,6 +125,7 @@ namespace GymBuddy.Controllers
         public ActionResult<AllWorkouts> DeleteWorkout(long id)
         {
             var userName = User.Claims.Single(a => a.Type == ClaimTypes.NameIdentifier).Value;
+            var user = User;
 
             var value = _context.Workouts.First(i => i.UserData.User == userName && i.Id==id);
             if (value == null) return NotFound("Workout not found");

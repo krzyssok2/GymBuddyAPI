@@ -16,6 +16,7 @@ namespace GymBuddyAPI
         public DbSet<UserSchedule> Schedules { get; set; }
         public DbSet<ExerciseSet> ExericseSets { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
+        public DbSet<WeighChanges> WeighChanges { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

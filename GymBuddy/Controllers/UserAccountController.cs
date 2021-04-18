@@ -349,5 +349,69 @@ namespace GymBuddy.Controllers
 
             return Ok("Assigned");
         }
+
+        [HttpPut("Weight/update")]
+        public IActionResult UpdateWeight(int newWeight)
+        {
+            var userName = User.Claims.Single(a => a.Type == ClaimTypes.NameIdentifier).Value;
+
+            var user = _context.UserData.First(i => i.User == userName);
+
+            var oldWeight = user.CurrentWeight;
+
+            user.CurrentWeight = newWeight;
+
+            WeighChanges Audit = new WeighChanges
+            {
+                ChangeDate = DateTime.Now,
+                NewWeight = newWeight,
+                OldWeight = oldWeight,
+                User = user
+            };
+
+            _context.WeighChanges.Add(Audit);
+            _context.SaveChanges();
+
+            return Ok("Assigned");
+        }
+
+        [HttpGet("Weight/Current")]
+        public ActionResult<CurrentWeightModel> GetCurrentWeight()
+        {
+            var userName = User.Claims.Single(a => a.Type == ClaimTypes.NameIdentifier).Value;
+
+            var user = _context.UserData.Include(i => i.WeightAudit).First(i => i.User == userName);
+
+            var currentWeight = new CurrentWeightModel
+            {
+                CurrentWeight = user.CurrentWeight
+            };
+
+            return Ok(currentWeight);
+        }
+
+        [HttpGet("Weight")]
+        public ActionResult<WeightAuditModel> GetWeight()
+        {
+            var userName = User.Claims.Single(a => a.Type == ClaimTypes.NameIdentifier).Value;
+
+            var user = _context.UserData.Include(i=>i.WeightAudit).First(i => i.User == userName);
+
+            var weightChanges = _context.WeighChanges
+                .Where(i => i.User == user)
+                .OrderByDescending(i=>i.ChangeDate).ToList();
+
+            var weightChangesAnswer = new WeightAuditModel
+            {
+                WeightChanges = weightChanges.Select(i => new WeightChanges
+                {
+                    ChangeTime = i.ChangeDate,
+                    NewWeight = i.NewWeight,
+                    OldWeight = i.OldWeight
+                }).ToList()
+            };
+
+            return Ok(weightChangesAnswer);
+        }
     }
 }

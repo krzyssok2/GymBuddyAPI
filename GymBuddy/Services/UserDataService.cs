@@ -41,5 +41,26 @@ namespace GymBuddyAPI.Services
             string username = user.Claims.Single(a => a.Type == ClaimTypes.NameIdentifier).Value;
             return username;
         }
+
+        public AllExercises GetExercisesByClaim(List<Exercise> Exercises, string username)
+        {
+            var exercises = Exercises.Where(i => i.Creator == username).ToList();
+            var allExercises = new AllExercises()
+            {
+                Exercises = exercises.Select(i => new ExerciseModel()
+                {
+                    Id = i.Id,
+                    ExerciseName = i.Name,
+                    Type = i.ExerciseType,
+                    Sets = i.Sets.Select(j => new SetModel
+                    {
+                        Id = j.Id,
+                        RepCount = j.RepCount,
+                        Weights = j.Weight,
+                    }).ToList()
+                }).ToList()
+            };
+            return allExercises;
+        }
     }
 }

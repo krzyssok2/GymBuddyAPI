@@ -14,68 +14,6 @@ namespace ApiTests
     public class UnitTest1
     {
         UserDataService userDataService = new UserDataService();
-        //[Fact]
-        //public void TestMethod1()
-        //{
-        //    //Arrange-arrange what i use
-            
-        //    List<Workout> WorkoutList = new List<Workout>
-        //    {
-        //        new Workout
-        //        {
-        //            Id=1,
-        //            UserData=null,
-        //            WorkoutName="name1",
-        //            Exercises= new List<Exercise>
-        //            {
-        //                new Exercise
-        //                {
-        //                    Creator="Admin",
-        //                    ExerciseType=GymBuddyAPI.Models.ExerciseType.Abs,
-        //                    Id=5,
-        //                    Name="asd",
-        //                    Sets= new List<ExerciseSet>
-        //                    {
-
-        //                    }                           
-        //                }
-        //            }
-
-        //        }
-        //    };
-
-        //    AllWorkouts allWorkouts = new AllWorkouts
-        //    {
-        //        Workouts = new List<WorkoutModel>
-        //        {
-        //            new WorkoutModel
-        //            {
-        //                Id=1,
-        //                Name="name1",
-        //                Exercises= new List<ExerciseModel>
-        //                {
-        //                    new ExerciseModel
-        //                    {
-        //                        Id=5,
-        //                        ExerciseName="asd",
-        //                        Type=ExerciseType.Abs,
-        //                        Sets= new List<SetModel>
-        //                        {
-
-        //                        }
-        //                    }
-        //                }
-        //            }
-        //        }
-        //    };
-
-        //    //Act - the call of the method
-
-        //    var answer = userDataService.GetWorkoutTransformation(WorkoutList);
-
-        //    //Assert - assert values from act
-        //    Xunit.Assert.True(allWorkouts.Equals(answer));
-        //}
 
         [Fact]
         public void TestGettingUserClaim()
@@ -83,33 +21,87 @@ namespace ApiTests
             //Arrange-arrange what i use
             var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] {
                                         new Claim(ClaimTypes.NameIdentifier, "admin@gmail.com"),
-                                        new Claim(ClaimTypes.Name, "gunnar@somecompany.com")
+                                        new Claim(ClaimTypes.Name, "test@gmail.com")
                                    }, "TestAuthentication"));
 
-            var userName = user.Claims.Single(a => a.Type == ClaimTypes.NameIdentifier).Value;
+            var WrongClaimUser = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] {
+                                        new Claim(ClaimTypes.Name, "test@gmail.com")
+                                   }, "TestAuthentication"));
 
             //Act - the call of the method
 
             var nickname= userDataService.IdentifyUserClaim(user);
 
+            var ex = Xunit.Assert.Throws<InvalidOperationException>(() => userDataService.IdentifyUserClaim(WrongClaimUser));
+
 
             //Assert - assert values from act
+
+            //Corrent
             Xunit.Assert.Equal("admin@gmail.com", nickname);
+            //Not Correct
+            Xunit.Assert.NotEqual("test@gmail.com", nickname);
+            //Error
+            Xunit.Assert.Equal("Sequence contains no matching element", ex.Message);
         }
 
         [Fact]
-        public void TestClaimFake ()
+        public void GetCreatedWorkoutClaimedData()
         {
-            //Arrange-arrange what i use
-            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] {                                        
-                                        new Claim(ClaimTypes.Name, "gunnar@somecompany.com")
+            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[] {
+                                        new Claim(ClaimTypes.NameIdentifier, "admin@gmail.com"),
+                                        new Claim(ClaimTypes.Name, "test@gmail.com")
                                    }, "TestAuthentication"));
 
 
-            var ex = Xunit.Assert.Throws<InvalidOperationException>(() => userDataService.IdentifyUserClaim(user));
+            List<Exercise> Exercises = new List<Exercise>
+            {
+                new Exercise
+                {
+                    Creator="admin@gmail.com",
+                    Name="Test1",
+                    Sets= new List<ExerciseSet>
+                    {
 
-            //Assert - assert values from act
-            Xunit.Assert.Equal("Sequence contains no matching element", ex.Message);
+                    }
+                },
+                new Exercise
+                {
+                    Creator="aadmin@gmail.com",
+                    Name="Test2",
+                    Sets= new List<ExerciseSet>
+                    {
+
+                    }
+                },
+                new Exercise
+                {
+                    Creator="hahahahahahaha@gmail.com",
+                    Name="Test3",
+                    Sets= new List<ExerciseSet>
+                    {
+
+                    }
+                },
+                 new Exercise
+                {
+                    Creator="admin@gmail.com",
+                    Name="Test4",
+                    Sets= new List<ExerciseSet>
+                    {
+
+                    }
+                },
+            };
+
+            var nickname = userDataService.IdentifyUserClaim(user);
+
+            var result=userDataService.GetExercisesByClaim(Exercises, nickname);
+
+            Xunit.Assert.Equal(2, result.Exercises.Count);
+            //Not Correct
+            Xunit.Assert.NotEqual(1, result.Exercises.Count);
+
         }
 
     }

@@ -10,21 +10,22 @@ namespace GymBuddyAPI
     {
         public GymBuddyContext(DbContextOptions options) : base(options) { }
 
-        public DbSet<UserData> UserData { get; set; }
-        public DbSet<Workout> Workouts { get; set; }
-        public DbSet<Exercise> Exercises { get; set; }
-        public DbSet<UserSchedule> Schedules { get; set; }
-        public DbSet<ExerciseSet> ExericseSets { get; set; }
-        public DbSet<RefreshToken> RefreshTokens { get; set; }
-        public DbSet<WeighChanges> WeighChanges { get; set; }
+        public DbSet<TestEntity> TestEntity { get; set; }
+        //public DbSet<UserData> UserData { get; set; }
+        //public DbSet<Workout> Workouts { get; set; }
+        //public DbSet<Exercise> Exercises { get; set; }
+        //public DbSet<UserSchedule> Schedules { get; set; }
+        //public DbSet<ExerciseSet> ExericseSets { get; set; }
+        //public DbSet<RefreshToken> RefreshTokens { get; set; }
+        //public DbSet<WeighChanges> WeighChanges { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
-            builder.ApplyConfiguration(new UserDataConfiguration());
-            builder.ApplyConfiguration(new WorkoutsConfiguration());
-            builder.ApplyConfiguration(new ExerciseConfiguration());
+            //builder.ApplyConfiguration(new UserDataConfiguration());
+            //builder.ApplyConfiguration(new WorkoutsConfiguration());
+            //builder.ApplyConfiguration(new ExerciseConfiguration());
         }
     }
 }

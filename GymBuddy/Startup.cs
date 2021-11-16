@@ -99,7 +99,7 @@ namespace GymBuddy
             });
             services.AddControllers().AddNewtonsoftJson(options =>
             options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
-            services.AddScoped<AuthServices>();
+            //services.AddScoped<AuthServices>();
 
             services.AddCors(c =>
             {
